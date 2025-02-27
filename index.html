@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title name="Title2">Political Ideology Finder</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: rgb(19, 19, 19);
+            text-align: center;
+            overflow-x: hidden; /* Only hide horizontal overflow */
+            position: relative;
+            background-color: #000; /* Dark background as fallback */
+            min-height: 100vh;
+        }
+
+        .Title2{ color:#1DA1F2
+
+        }
+
+        /* Stars background animation */
+        .stars {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: url('https://source.unsplash.com/1920x1080/?milkyway,stars,galaxy') no-repeat center center;
+            background-size: cover;
+            animation: moveStars 100s linear infinite;
+            z-index: -2; /* Ensure the stars are behind the content */
+            opacity: 0.8; /* Slightly dim the background */
+        }
+
+        /* Stars and planets animation */
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: twinkle 2s infinite alternate;
+            z-index: -1; /* Ensure stars don't interfere with clickable elements */
+        }
+
+        .planet {
+            position: absolute;
+            background-color: #1DA1F2;
+            border-radius: 50%;
+            animation: rotatePlanet 10s infinite linear;
+            z-index: -1; /* Ensure planets stay behind the content */
+            box-shadow: 0 0 15px rgba(29, 161, 242, 0.7); /* Add glow to planets */
+        }
+
+        /* Keyframes for stars and planets animation */
+        @keyframes moveStars {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.4; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        @keyframes rotatePlanet {
+            0% { transform: translateX(-50%) rotate(0deg); }
+            100% { transform: translateX(-50%) rotate(360deg); }
+        }
+
+        /* Header and content styling */
+        .header {
+            font-size: 36px;
+            font-weight: bold;
+            padding: 20px;
+            background: rgba(73, 136, 218, 0.7);
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+            color: aliceblue;
+        }
+
+        .content {
+            width: 80%;
+            max-width: 800px;
+            margin: 0 auto 50px auto;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 1; /* Ensure the content is above the background */
+            color: white; /* Make text visible on dark background */
+        }
+
+        .question {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            padding: 15px;
+            background: #1DA1F2;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            background: #cde1f0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(29, 161, 242, 0.4);
+        }
+
+        .bot-response {
+            margin-top: 15px;
+            font-style: italic;
+            color: #bbb;
+        }
+
+        /* Political Text Animation Styles */
+        .political-ticker {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 0;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .ticker-content {
+            display: flex;
+            white-space: nowrap;
+            animation: ticker 60s linear infinite;
+        }
+
+        .ticker-item {
+            display: inline-block;
+            padding: 0 50px;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .left {
+            color: #3498db; /* Blue for left-leaning quotes */
+        }
+
+        .right {
+            color: #e74c3c; /* Red for right-leaning quotes */
+        }
+
+        .center {
+            color: #9b59b6; /* Purple for centrist quotes */
+        }
+
+        @keyframes ticker {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        /* Text animation effects */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        .glow {
+            text-shadow: 0 0 5px currentColor, 0 0 10px currentColor;
+            animation: glow 2s infinite alternate;
+        }
+
+        .shake {
+            animation: shake 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 5px currentColor, 0 0 10px currentColor; }
+            to { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            50% { transform: translateX(0); }
+            75% { transform: translateX(2px); }
+            100% { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div> <!-- Stars background -->
+    <div class="header">Political Ideology Finder</div>
+    <div class="content">
+        <div id="question-container">
+            <p class="question" id="question-text">Loading question...</p>
+            <div class="options" id="options-container"></div>
+            <p class="bot-response" id="bot-response"></p>
+        </div>
+    </div>
+    
+    <!-- Political Text Animation -->
+    <div class="political-ticker">
+        <div class="ticker-content" id="ticker-content">
+            <!-- Ticker items will be added dynamically -->
+        </div>
+    </div>
+    
+    <script>
+        const questions = [
+            { text: "Should freedom of speech include hate speech?", options: ["Yes", "No", "Neutral"] },
+            { text: "Should governments impose heavy regulations on social media?", options: ["Yes", "No", "Neutral"] },
+            { text: "Is a benevolent dictatorship better than a corrupt democracy?", options: ["Yes", "No", "Neutral"] },
+            { text: "Should prisoners be allowed to vote?", options: ["Yes", "No", "Neutral"] },
+            { text: "Should AI be allowed to make major governmental decisions?", options: ["Yes", "No", "Neutral"] },
+            { text: "Would you sacrifice privacy for national security?", options: ["Yes", "No", "Neutral"] },
+            { text: "Should billionaires exist in a world with poverty?", options: ["Yes", "No", "Neutral"] },
+            { text: "Is universal healthcare worth increased taxation?", options: ["Yes", "No", "Neutral"] },
+            { text: "Should education be prioritized over military funding?", options: ["Yes", "No", "Neutral"] },
+            { text: "Is there ever a justified reason for government censorship?", options: ["Yes", "No", "Neutral"] }
+        ];
+
+        let currentQuestionIndex = 0;
+        let leftScore = 0, rightScore = 0;
+
+        function showQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                showResult();
+                return;
+            }
+
+            document.getElementById("bot-response").innerText = "";
+            const question = questions[currentQuestionIndex];
+            document.getElementById("question-text").innerText = question.text;
+            const optionsContainer = document.getElementById("options-container");
+            optionsContainer.innerHTML = "";
+
+            question.options.forEach(option => {
+                const button = document.createElement("button");
+                button.classList.add("option");
+                button.innerText = option;
+                button.onclick = () => handleAnswer(option);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function handleAnswer(option) {
+            if (option === "Yes") leftScore++;
+            if (option === "No") rightScore++;
+
+            document.getElementById("bot-response").innerText = getBotResponse();
+            setTimeout(() => {
+                currentQuestionIndex++;
+                showQuestion();
+            }, 1000);
+        }
+
+        function getBotResponse() {
+            const responses = ["Huh, good answer.", "Interesting choice!", "That one's tricky!", "I see where you're coming from.", "Not bad!", "That's a dilemma, isn't it?", "Deep thoughts!"];
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        function showResult() {
+            let result = "Center";
+            if (leftScore > rightScore) result = "Left-leaning";
+            if (rightScore > leftScore) result = "Right-leaning";
+            document.getElementById("question-container").innerHTML = `<h2>Your Political Alignment: ${result}</h2>`;
+        }
+
+        // Create stars and planets
+        function createStars() {
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement("div");
+                star.classList.add("star");
+                star.style.width = Math.random() * 3 + "px";
+                star.style.height = star.style.width;
+                star.style.top = Math.random() * window.innerHeight + "px";
+                star.style.left = Math.random() * window.innerWidth + "px";
+                document.body.appendChild(star);
+            }
+        }
+
+        function createPlanets() {
+            const planet = document.createElement("div");
+            planet.classList.add("planet");
+            planet.style.width = "50px";
+            planet.style.height = "50px";
+            planet.style.top = "30%";
+            planet.style.left = "50%";
+            planet.style.animationDuration = "20s";
+            document.body.appendChild(planet);
+        }
+
+        // Political quotes and statements for the ticker
+        const politicalStatements = [
+            { text: "Liberty without equality is privilege", class: "left glow" },
+            { text: "Those who say communism has blood on its hands have not read the history of capitalism", class: "right pulse" },
+            { text: "Compromise is not surrender", class: "center" },
+            { text: "Healthcare is a human right", class: "left shake" },
+            { text: "Lower taxes, smaller government", class: "right glow" },
+            { text: "Unity in diversity", class: "center pulse" },
+            { text: "Equality of opportunity, not outcome", class: "right" },
+            { text: "People over profits", class: "left glow" },
+            { text: "Individual responsibility does not mean shit when the reason my room is dirty is precisely how society is messed up - Slavoj Zizek", class: "right pulse" },
+            { text: "Democracy requires participation", class: "center shake" },
+            { text: "The fruits of the earth belong to everybody but the earth itself to nobody - Jean Jacque Roussoue", class: "left" },
+            { text: "No human being is an illegal", class: "right glow" },
+            { text: "Facts over ideology", class: "center pulse" },
+            { text: "Stand against censorship", class: "left shake" },
+            { text: "Protect constitutional rights", class: "right" },
+            { text: "Progress through pragmatism", class: "center glow" }
+        ];
+
+        // Initialize the political ticker
+        function initPoliticalTicker() {
+            const tickerContent = document.getElementById("ticker-content");
+            
+            // Add each statement to the ticker
+            politicalStatements.forEach(statement => {
+                const tickerItem = document.createElement("span");
+                tickerItem.classList.add("ticker-item");
+                tickerItem.classList.add(statement.class.split(" ")[0]); // Add left/right/center class
+                
+                // Add animation classes if present
+                const classes = statement.class.split(" ");
+                if (classes.length > 1) {
+                    tickerItem.classList.add(classes[1]);
+                }
+                
+                tickerItem.textContent = statement.text;
+                tickerContent.appendChild(tickerItem);
+            });
+        }
+
+        // Initialize stars and planets
+        createStars();
+        createPlanets();
+        initPoliticalTicker();
+
+        showQuestion();
+    </script>
+</body>
+</html>
